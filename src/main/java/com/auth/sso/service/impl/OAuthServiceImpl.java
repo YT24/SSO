@@ -89,7 +89,6 @@ public class OAuthServiceImpl implements OAuthService {
             throw new RuntimeException("refresh_token无效或已过期");
         }
         String[] arr = tokenValue.split(",", 3);
-        Long userId = Long.valueOf(arr[0]);
         String codeClientId = arr[1];
         if (!clientId.equals(codeClientId)) {
             throw new RuntimeException("客户端信息错误");
