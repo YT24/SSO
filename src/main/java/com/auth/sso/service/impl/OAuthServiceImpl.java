@@ -10,8 +10,6 @@ import com.auth.sso.config.Oauth2Properties;
 import com.auth.sso.entity.OauthClient;
 import com.auth.sso.entity.SysUser;
 import com.auth.sso.mapper.OauthClientMapper;
-import com.auth.sso.mapper.OauthCodeMapper;
-import com.auth.sso.mapper.OauthTokenMapper;
 import com.auth.sso.mapper.SysUserMapper;
 import com.auth.sso.service.OAuthService;
 import com.auth.sso.util.RedisUtil;
@@ -22,10 +20,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 @Service
 public class OAuthServiceImpl implements OAuthService {
 
-    @Autowired
-    private OauthCodeMapper oauthCodeMapper;
-    @Autowired
-    private OauthTokenMapper oauthTokenMapper;
     @Autowired
     private OauthClientMapper oauthClientMapper;
     @Autowired
