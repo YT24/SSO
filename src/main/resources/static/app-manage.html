@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSO统一认证管理平台</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+        }
+
+        .nav-link.active {
+            background-color: #e9ecef;
+            font-weight: 500;
+        }
+
+        .app-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        .table-hover tbody tr {
+            cursor: pointer;
+        }
+
+        .permission-tree {
+            list-style: none;
+            padding-left: 1rem;
+        }
+
+        .permission-tree li {
+            margin-bottom: 0.5rem;
+        }
+
+        .permission-tree .form-check {
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar navbar-expand navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">SSO管理平台</a>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle me-1"></i>管理员
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>个人中心</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>系统设置</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>退出登录</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- 左侧导航菜单 -->
+            <div class="col-md-2 sidebar p-0">
+                <div class="list-group list-group-flush">
+                    <a href="#" class="list-group-item list-group-item-action active">
+                        <i class="fas fa-cubes me-2"></i>应用管理
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="fas fa-user-friends me-2"></i>角色管理
+                    </a>
+                </div>
+            </div>
+
+            <!-- 主内容区 -->
+            <div class="col-md-10 py-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div></div>
+                    <div>
+                        <button class="btn btn-outline-danger me-2">批量禁用</button>
+                        <button class="btn btn-outline-success me-2">批量启用</button>
+                        <button class="btn btn-outline-secondary me-2">批量删除</button>
+                        <button class="btn btn-primary me-2">
+                            <i class="fas fa-plus me-1"></i>添加应用
+                        </button>
+                        <button class="btn btn-outline-secondary">
+                            <i class="fas fa-sync-alt me-1"></i>刷新
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 搜索和筛选 -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="搜索应用名称或ID">
+                                    <button class="btn btn-outline-secondary" type="button">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-end">
+                                    <select class="form-select me-2" style="width: 150px;">
+                                        <option selected>全部状态</option>
+                                        <option>已启用</option>
+                                        <option>已禁用</option>
+                                    </select>
+                                    <select class="form-select" style="width: 150px;">
+                                        <option selected>全部类型</option>
+                                        <option>OAuth 2.0</option>
+                                        <option>SAML</option>
+                                        <option>OpenID Connect</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 应用列表表格 -->
+                <div class="card">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th width="40">
+                                            <input type="checkbox" class="form-check-input">
+                                        </th>
+                                        <th>应用名称</th>
+                                        <th>应用ID</th>
+                                        <th>认证协议</th>
+                                        <th>创建时间</th>
+                                        <th width="150">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <div>
+                            <!-- 批量操作按钮已移动到上方 -->
+                        </div>
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1">上一页</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">下一页</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- 添加/编辑应用模态框 -->
+                <div class="modal fade" id="appModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">添加应用</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">应用名称</label>
+                                            <input type="text" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">应用标识</label>
+                                            <input type="text" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">应用描述</label>
+                                        <textarea class="form-control" rows="2"></textarea>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">应用图标</label>
+                                            <input type="file" class="form-control">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">认证协议</label>
+                                            <select class="form-select">
+                                                <option>OAuth 2.0</option>
+                                                <option>SAML</option>
+                                                <option>OpenID Connect</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">回调URL</label>
+                                        <input type="url" class="form-control"
+                                            placeholder="https://example.com/auth/callback" required>
+                                        <div class="form-text">多个URL请用逗号分隔</div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" onclick="saveApp()">保存</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 应用列表数据
+        let appList = [];
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('SSO管理平台已加载');
+
+            // 绑定应用管理菜单点击事件
+            const appManageMenu = document.querySelector('.list-group-item');
+            if (appManageMenu) {
+                appManageMenu.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    loadAppList();
+                });
+            }
+
+            // 页面加载时自动加载应用列表
+            loadAppList();
+        });
+
+        // 加载应用列表
+        async function loadAppList() {
+            try {
+                console.log('正在加载应用列表...');
+
+                const response = await fetch('/api/client/list', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('应用列表数据:', data);
+                console.log('数据类型检查:', {
+                    isArray: Array.isArray(data),
+                    hasSuccess: 'success' in data,
+                    successValue: data.success,
+                    hasCode: 'code' in data,
+                    codeValue: data.code,
+                    hasData: 'data' in data,
+                    dataValue: data.data
+                });
+
+                // 处理返回的数据 - 修复判断条件
+                if (data.success === true || data.code === 200 || data.code === 0 || Array.isArray(data)) {
+                    appList = Array.isArray(data) ? data : (data.data || data.result || []);
+                    console.log('解析后的应用列表:', appList);
+                    renderAppList(appList);
+                } else {
+                    console.error('获取应用列表失败:', data.message || data.msg || '未知错误');
+                    showError('获取应用列表失败: ' + (data.message || data.msg || '未知错误'));
+                }
+            } catch (error) {
+                console.error('加载应用列表出错:', error);
+                showError('加载应用列表出错: ' + error.message);
+            }
+        }
+
+        // 渲染应用列表到表格
+        function renderAppList(apps) {
+            const tbody = document.querySelector('table tbody');
+            if (!tbody) {
+                console.error('找不到表格tbody元素');
+                return;
+            }
+
+            // 清空现有内容
+            tbody.innerHTML = '';
+
+            if (!apps || apps.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-2x mb-2"></i><br>
+                            暂无应用数据
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // 渲染每一行数据
+            apps.forEach(app => {
+                const row = document.createElement('tr');
+                // 优先使用id字段，因为后端接口期望数字类型的id
+                const appId = app.id || app.clientId;
+                const displayClientId = app.clientId || app.id || '-';
+
+                row.innerHTML = `
+                    <td><input type="checkbox" class="form-check-input" value="${appId}"></td>
+                    <td>${app.clientName || app.appName || app.name || '-'}</td>
+                    <td>${displayClientId}</td>
+                    <td>${app.protocol || 'oauth2.0'}</td>
+                    <td>${formatDate(app.createTime || app.createdAt || app.createDate)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editApp(${appId})">编辑</button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="manageAuth(${appId})">授权</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            console.log(`成功渲染 ${apps.length} 个应用`);
+        }
+
+        // 获取状态徽章样式
+        function getStatusBadgeClass(status) {
+            if (status === true || status === 1 || status === '1' || status === 'enabled' || status === '已启用') {
+                return 'bg-success';
+            } else if (status === false || status === 0 || status === '0' || status === 'disabled' || status === '已禁用') {
+                return 'bg-warning text-dark';
+            }
+            return 'bg-secondary';
+        }
+
+        // 获取状态文本
+        function getStatusText(status) {
+            if (status === true || status === 1 || status === '1' || status === 'enabled' || status === '已启用') {
+                return '已启用';
+            } else if (status === false || status === 0 || status === '0' || status === 'disabled' || status === '已禁用') {
+                return '已禁用';
+            }
+            return '未知';
+        }
+
+        // 格式化日期
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+
+            try {
+                const date = new Date(dateStr);
+                if (isNaN(date.getTime())) return dateStr;
+
+                return date.toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                });
+            } catch (error) {
+                return dateStr;
+            }
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            const tbody = document.querySelector('table tbody');
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-danger py-4">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-2"></i><br>
+                            ${message}
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // 编辑应用
+        async function editApp(clientId) {
+            console.log('编辑应用 - 原始ID:', clientId, '类型:', typeof clientId);
+
+            try {
+                // 设置当前编辑的应用ID
+                currentEditingAppId = clientId;
+
+                // 显示加载状态
+                const modal = new bootstrap.Modal(document.getElementById('appModal'));
+                document.querySelector('#appModal .modal-title').textContent = '编辑应用';
+
+                // 先显示模态框
+                modal.show();
+
+                // 显示加载状态
+                showModalLoading();
+
+                // 尝试多种ID格式调用接口
+                let response = null;
+                let finalId = clientId;
+
+                // 方案1: 直接使用原始ID
+                try {
+                    console.log('尝试方案1 - 使用原始ID:', clientId);
+                    response = await fetch(`/api/client/${clientId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        console.log('方案1成功');
+                        finalId = clientId;
+                    }
+                } catch (error) {
+                    console.log('方案1失败:', error.message);
+                }
+
+                // 方案2: 如果方案1失败且ID是纯数字字符串，转换为数字
+                if (!response || !response.ok) {
+                    if (typeof clientId === 'string' && /^\d+$/.test(clientId)) {
+                        const numericId = parseInt(clientId, 10);
+                        console.log('尝试方案2 - 使用数字ID:', numericId);
+
+                        try {
+                            response = await fetch(`/api/client/${numericId}`, {
+                                method: 'GET',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+
+                            if (response.ok) {
+                                console.log('方案2成功');
+                                finalId = numericId;
+                            }
+                        } catch (error) {
+                            console.log('方案2失败:', error.message);
+                        }
+                    }
+                }
+
+                // 方案3: 尝试URL编码
+                if (!response || !response.ok) {
+                    const encodedId = encodeURIComponent(clientId);
+                    if (encodedId !== clientId) {
+                        console.log('尝试方案3 - 使用URL编码ID:', encodedId);
+
+                        try {
+                            response = await fetch(`/api/client/${encodedId}`, {
+                                method: 'GET',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+
+                            if (response.ok) {
+                                console.log('方案3成功');
+                                finalId = encodedId;
+                            }
+                        } catch (error) {
+                            console.log('方案3失败:', error.message);
+                        }
+                    }
+                }
+
+                // 如果所有方案都失败
+                if (!response || !response.ok) {
+                    const status = response ? response.status : 'unknown';
+                    throw new Error(`所有ID格式尝试都失败了。HTTP状态: ${status}。请检查后端接口是否支持ID: "${clientId}"`);
+                }
+
+                console.log('最终使用的ID:', finalId, '响应状态:', response.status);
+
+                const data = await response.json();
+                console.log('应用详情数据:', data);
+
+                // 处理返回的数据
+                let appDetail = null;
+                if (data.success === true || data.code === 200 || data.code === 0) {
+                    appDetail = data.data || data.result || data;
+                } else if (data.clientId || data.id) {
+                    // 直接返回应用对象
+                    appDetail = data;
+                } else {
+                    throw new Error(data.message || data.msg || '获取应用详情失败');
+                }
+
+                // 渲染应用详情到模态框
+                renderAppDetail(appDetail);
+
+            } catch (error) {
+                console.error('获取应用详情出错:', error);
+                let errorMessage = '获取应用详情失败: ' + error.message;
+
+                // 针对不同错误类型提供更友好的提示
+                if (error.message.includes('Failed to convert')) {
+                    errorMessage = `应用ID "${clientId}" 格式不正确。后端期望数字类型，但收到字符串类型。请检查后端接口参数定义。`;
+                } else if (error.message.includes('NumberFormatException')) {
+                    errorMessage = `应用ID "${clientId}" 无法转换为数字。请检查ID格式。`;
+                } else if (error.message.includes('404')) {
+                    errorMessage = `找不到ID为 "${clientId}" 的应用。请检查应用是否存在。`;
+                }
+
+                showModalError(errorMessage);
+            }
+        }
+
+        // 渲染应用详情到模态框
+        function renderAppDetail(app) {
+            if (!app) {
+                showModalError('应用数据为空');
+                return;
+            }
+
+            // 先隐藏加载状态，恢复表单
+            hideModalLoading();
+
+            // 等待DOM更新后再填充表单
+            setTimeout(() => {
+                // 填充表单字段
+                const form = document.querySelector('#appModal form');
+                if (!form) {
+                    console.error('找不到表单元素，重试中...');
+                    // 如果还是找不到，再等一下
+                    setTimeout(() => {
+                        fillFormData(app);
+                    }, 100);
+                    return;
+                }
+
+                fillFormData(app);
+            }, 50);
+        }
+
+        // 填充表单数据的独立函数
+        function fillFormData(app) {
+            const form = document.querySelector('#appModal form');
+            if (!form) {
+                showModalError('无法找到表单元素');
+                return;
+            }
+
+            console.log('开始填充表单数据:', app);
+
+            // 应用名称 - 使用更精确的选择器
+            const inputs = form.querySelectorAll('input[type="text"]');
+            if (inputs.length >= 2) {
+                inputs[0].value = app.appName || app.clientName || app.name || '';
+                inputs[1].value = app.clientId || app.id || '';
+                console.log('填充应用名称和ID:', inputs[0].value, inputs[1].value);
+            }
+
+            // 应用描述
+            const descTextarea = form.querySelector('textarea');
+            if (descTextarea) {
+                descTextarea.value = app.description || app.desc || '';
+                console.log('填充描述:', descTextarea.value);
+            }
+
+            // 回调URL
+            const callbackInput = form.querySelector('input[type="url"]');
+            if (callbackInput) {
+                callbackInput.value = app.redirectUri || app.callbackUrl || '';
+                console.log('填充回调URL:', callbackInput.value);
+            }
+
+            // 认证协议
+            const protocolSelect = form.querySelector('select.form-select');
+            if (protocolSelect) {
+                const protocol = app.protocol || 'OAuth 2.0';
+                protocolSelect.value = protocol;
+                console.log('填充认证协议:', protocol);
+            }
+
+            console.log('应用详情渲染完成');
+        }
+
+        // 显示模态框加载状态
+        function showModalLoading() {
+            const modalBody = document.querySelector('#appModal .modal-body');
+            if (modalBody) {
+                modalBody.innerHTML = `
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">加载中...</span>
+                        </div>
+                        <div class="mt-2">正在加载应用详情...</div>
+                    </div>
+                `;
+            }
+        }
+
+        // 隐藏模态框加载状态，恢复表单
+        function hideModalLoading() {
+            const modalBody = document.querySelector('#appModal .modal-body');
+            if (modalBody) {
+                modalBody.innerHTML = `
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">应用名称</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">应用标识</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">应用描述</label>
+                            <textarea class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">应用图标</label>
+                                <input type="file" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">认证协议</label>
+                                <select class="form-select">
+                                    <option>OAuth 2.0</option>
+                                    <option>SAML</option>
+                                    <option>OpenID Connect</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">回调URL</label>
+                            <input type="url" class="form-control" placeholder="https://example.com/auth/callback" required>
+                            <div class="form-text">多个URL请用逗号分隔</div>
+                        </div>
+                    </form>
+                `;
+            }
+        }
+
+        // 显示模态框错误信息
+        function showModalError(message) {
+            const modalBody = document.querySelector('#appModal .modal-body');
+            if (modalBody) {
+                modalBody.innerHTML = `
+                    <div class="text-center text-danger py-4">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-2"></i><br>
+                        ${message}
+                    </div>
+                `;
+            }
+        }
+
+        // 管理授权
+        function manageAuth(clientId) {
+            console.log('管理授权:', clientId);
+            // TODO: 实现管理授权功能
+        }
+
+        // 刷新按钮点击事件
+        document.addEventListener('DOMContentLoaded', function () {
+            const refreshBtn = document.querySelector('button[onclick*="刷新"], .btn:has(.fa-sync-alt)');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    loadAppList();
+                });
+            }
+        });
+
+        // 当前编辑的应用ID
+        let currentEditingAppId = null;
+
+        // 保存应用
+        async function saveApp() {
+            try {
+                console.log('开始保存应用...');
+
+                // 获取表单数据
+                const form = document.querySelector('#appModal form');
+                if (!form) {
+                    throw new Error('找不到表单');
+                }
+
+                // 获取表单字段值
+                const appName = form.querySelector('input[type="text"]').value.trim();
+                const clientId = form.querySelectorAll('input[type="text"]')[1].value.trim();
+                const description = form.querySelector('textarea').value.trim();
+                const protocol = form.querySelector('select.form-select').value;
+                const redirectUri = form.querySelector('input[type="url"]').value.trim();
+
+                // 验证必填字段
+                if (!appName) {
+                    console.log('请输入应用名称');
+                    return;
+                }
+                if (!clientId) {
+                    console.log('请输入应用标识');
+                    return;
+                }
+                if (!redirectUri) {
+                    console.log('请输入回调URL');
+                    return;
+                }
+
+                // 构建更新数据
+                const updateData = {
+                    id: currentEditingAppId,
+                    clientName: appName,
+                    clientId: clientId,
+                    description: description,
+                    protocol: protocol,
+                    redirectUri: redirectUri
+                };
+
+                console.log('更新数据:', updateData);
+
+                // 显示保存中状态
+                const saveBtn = document.querySelector('#appModal .btn-primary');
+                const originalText = saveBtn.textContent;
+                saveBtn.textContent = '保存中...';
+                saveBtn.disabled = true;
+
+                // 调用更新接口
+                const response = await fetch('/api/client/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log('更新结果:', result);
+
+                // 处理响应
+                if (result.success === true || result.code === 200 || result.code === 0) {
+                    // 关闭模态框
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('appModal'));
+                    modal.hide();
+
+                    // 刷新应用列表
+                    loadAppList();
+
+                    // 添加角色管理功能
+                    // ...
+                } else {
+                    throw new Error(result.message || result.msg || '保存失败');
+                }
+
+            } catch (error) {
+                console.error('保存应用出错:', error);
+            } finally {
+                // 恢复按钮状态
+                const saveBtn = document.querySelector('#appModal .btn-primary');
+                if (saveBtn) {
+                    saveBtn.textContent = '保存';
+                    saveBtn.disabled = false;
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

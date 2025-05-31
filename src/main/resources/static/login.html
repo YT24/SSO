@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>统一身份认证登录</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: #f5f7fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .login-box {
+            background: #fff;
+            padding: 32px 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 16px #0001;
+            width: 340px;
+        }
+
+        .login-title {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 24px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 10px;
+            background: #409eff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        .login-btn:active {
+            background: #3076c9;
+        }
+
+        .error-msg {
+            color: #e74c3c;
+            margin-bottom: 10px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-box">
+        <div class="login-title">统一身份认证</div>
+        <div class="error-msg" id="errorMsg"></div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" name="username" required autocomplete="username" />
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password" />
+            </div>
+            <button type="submit" class="login-btn">登录</button>
+        </form>
+    </div>
+    <script>
+        // 获取 URL 参数
+        function getQueryParam(name) {
+            const url = new URL(window.location.href);
+            return url.searchParams.get(name) || '';
+        }
+        const client_id = getQueryParam('client_id');
+        const client_secret = getQueryParam('client_secret');
+        const redirect_uri = getQueryParam('redirect_uri') || '/';
+
+        document.getElementById('loginForm').onsubmit = async function (e) {
+            e.preventDefault();
+            document.getElementById('errorMsg').style.display = 'none';
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            if (!username || !password) return;
+
+            const params = new URLSearchParams({
+                username,
+                password,
+                client_id,
+                redirect_uri
+            });
+            try {
+                const resp = await fetch('/oauth2/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: params
+                });
+                if (resp.redirected) {
+                    window.location.href = resp.url;
+                } else {
+                    const msg = await resp.text();
+                    document.getElementById('errorMsg').textContent = msg || '登录失败';
+                    document.getElementById('errorMsg').style.display = 'block';
+                }
+            } catch (err) {
+                document.getElementById('errorMsg').textContent = '网络错误，请稍后重试';
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+
+</html>

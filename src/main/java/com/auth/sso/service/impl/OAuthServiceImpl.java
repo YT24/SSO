@@ -65,8 +65,9 @@ public class OAuthServiceImpl implements OAuthService {
         String accessToken = TokenGenerator.generateToken(32);
         String refreshToken = TokenGenerator.generateToken(32);
         String idToken = Base64.getEncoder().encodeToString(
-                ("{\"sub\":\"" + userId + "\",\"aud\":\"" + clientId + "\",\"exp\":" + (System.currentTimeMillis() / 1000 + oauth2Properties.getAccessTokenExpireSeconds()) + "}").getBytes()
-        );
+                ("{\"sub\":\"" + userId + "\",\"aud\":\"" + clientId + "\",\"exp\":"
+                        + (System.currentTimeMillis() / 1000 + oauth2Properties.getAccessTokenExpireSeconds()) + "}")
+                        .getBytes());
         String tokenKey = "oauth:token:" + accessToken;
         String refreshKey = "oauth:refresh:" + refreshToken;
         String tokenValue = userId + "," + clientId + "," + (codeScope == null ? "" : codeScope);
@@ -131,14 +132,23 @@ public class OAuthServiceImpl implements OAuthService {
         return new UserInfoVO(user.getId(), user.getUsername(), user.getNickname());
     }
 
+    @Override
+    public Long checkUser(String username, String password) {
+        SysUser user = sysUserMapper.selectOne(new QueryWrapper<SysUser>()
+                .eq("username", username)
+                .eq("password", password));
+        return user != null ? user.getId() : null;
+    }
+
     public static class UserInfoVO {
         public Long id;
         public String username;
         public String nickname;
+
         public UserInfoVO(Long id, String username, String nickname) {
             this.id = id;
             this.username = username;
             this.nickname = nickname;
         }
     }
-} 
+}

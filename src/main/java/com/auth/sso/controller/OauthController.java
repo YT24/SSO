@@ -9,6 +9,7 @@ import com.auth.sso.util.RedisUtil;
 import com.auth.sso.vo.TokenResponse;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/oauth2")
@@ -29,8 +30,7 @@ public class OauthController {
             @RequestParam(required = false) String scope,
             @RequestParam(required = false) String state,
             @RequestParam Long user_id, // 实际应从session获取
-            HttpServletResponse response
-    ) throws Exception {
+            HttpServletResponse response) throws Exception {
         String code = oAuthService.generateCode(client_id, redirect_uri, scope, user_id);
         response.sendRedirect(redirect_uri + "?code=" + code + (state != null ? "&state=" + state : ""));
     }
@@ -41,8 +41,7 @@ public class OauthController {
             @RequestParam String code,
             @RequestParam String client_id,
             @RequestParam String client_secret,
-            @RequestParam String redirect_uri
-    ) {
+            @RequestParam String redirect_uri) {
         return Result.success(oAuthService.exchangeToken(code, client_id, client_secret, redirect_uri));
     }
 
@@ -63,8 +62,29 @@ public class OauthController {
     public Result<TokenResponse> refreshToken(
             @RequestParam String refresh_token,
             @RequestParam String client_id,
-            @RequestParam String client_secret
-    ) {
+            @RequestParam String client_secret) {
         return Result.success(oAuthService.refreshToken(refresh_token, client_id, client_secret));
     }
-} 
+
+    @PostMapping("/login")
+    public void login(
+            @RequestParam String username,
+            @RequestParam String password,
+            @RequestParam String client_id,
+            @RequestParam String redirect_uri,
+            @RequestParam(required = false) String state,
+            HttpServletResponse response) throws IOException {
+        // 校验用户名密码，假设oAuthService.checkUser返回userId，校验失败返回null
+        Long userId = oAuthService.checkUser(username, password);
+        if (userId == null) {
+            response.setStatus(401);
+            response.getWriter().write("用户名或密码错误");
+            return;
+        }
+        // 生成授权码
+        String code = oAuthService.generateCode(client_id, redirect_uri, null, userId);
+        // 跳转到 redirect_uri?code=xxx&state=xxx
+        String redirect = redirect_uri + "?code=" + code + (state != null ? "&state=" + state : "");
+        response.sendRedirect(redirect);
+    }
+}

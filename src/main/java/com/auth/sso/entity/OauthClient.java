@@ -12,4 +12,5 @@ public class OauthClient {
     private String redirectUri;
     private String scope;
     private String protocol;
-} 
+    private String appName;
+}
