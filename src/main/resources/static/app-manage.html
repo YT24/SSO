@@ -77,89 +77,205 @@
             <!-- 左侧导航菜单 -->
             <div class="col-md-2 sidebar p-0">
                 <div class="list-group list-group-flush">
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="fas fa-star me-2"></i>我的应用
+                    </a>
                     <a href="#" class="list-group-item list-group-item-action active">
                         <i class="fas fa-cubes me-2"></i>应用管理
                     </a>
                     <a href="#" class="list-group-item list-group-item-action">
                         <i class="fas fa-user-friends me-2"></i>角色管理
                     </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="fas fa-user me-2"></i>用户管理
+                    </a>
                 </div>
             </div>
 
             <!-- 主内容区 -->
             <div class="col-md-10 py-3">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div></div>
-                    <div>
-                        <button class="btn btn-outline-danger me-2">批量禁用</button>
-                        <button class="btn btn-outline-success me-2">批量启用</button>
-                        <button class="btn btn-outline-secondary me-2">批量删除</button>
-                        <button class="btn btn-primary me-2">
-                            <i class="fas fa-plus me-1"></i>添加应用
-                        </button>
-                        <button class="btn btn-outline-secondary">
-                            <i class="fas fa-sync-alt me-1"></i>刷新
-                        </button>
+                <div id="app-manage-section">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div></div>
+                        <div>
+                            <button class="btn btn-outline-danger me-2">批量禁用</button>
+                            <button class="btn btn-outline-success me-2">批量启用</button>
+                            <button class="btn btn-outline-secondary me-2">批量删除</button>
+                            <button class="btn btn-primary me-2">
+                                <i class="fas fa-plus me-1"></i>添加应用
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fas fa-sync-alt me-1"></i>刷新
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <!-- 搜索和筛选 -->
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="搜索应用名称或ID">
-                                    <button class="btn btn-outline-secondary" type="button">
-                                        <i class="fas fa-search"></i>
-                                    </button>
+                    <!-- 搜索和筛选 -->
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="搜索应用名称或ID">
+                                        <button class="btn btn-outline-secondary" type="button">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="d-flex justify-content-end">
-                                    <select class="form-select me-2" style="width: 150px;">
-                                        <option selected>全部状态</option>
-                                        <option>已启用</option>
-                                        <option>已禁用</option>
-                                    </select>
-                                    <select class="form-select" style="width: 150px;">
-                                        <option selected>全部类型</option>
-                                        <option>OAuth 2.0</option>
-                                        <option>SAML</option>
-                                        <option>OpenID Connect</option>
-                                    </select>
+                                <div class="col-md-6">
+                                    <div class="d-flex justify-content-end">
+                                        <select class="form-select me-2" style="width: 150px;">
+                                            <option selected>全部状态</option>
+                                            <option>已启用</option>
+                                            <option>已禁用</option>
+                                        </select>
+                                        <select class="form-select" style="width: 150px;">
+                                            <option selected>全部类型</option>
+                                            <option>OAuth 2.0</option>
+                                            <option>SAML</option>
+                                            <option>OpenID Connect</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- 应用列表表格 -->
+                    <div class="card mb-4">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th width="40">
+                                                <input type="checkbox" class="form-check-input">
+                                            </th>
+                                            <th>应用名称</th>
+                                            <th>应用ID</th>
+                                            <th>应用地址</th>
+                                            <th>应用图标</th>
+                                            <th>认证协议</th>
+                                            <th>创建时间</th>
+                                            <th width="150">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex justify-content-between align-items-center">
+                            <div>
+                                <!-- 批量操作按钮已移动到上方 -->
+                            </div>
+                            <nav>
+                                <ul class="pagination pagination-sm mb-0">
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#" tabindex="-1">上一页</a>
+                                    </li>
+                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">下一页</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- 应用列表表格 -->
-                <div class="card">
+                <!-- 角色列表表格（初始隐藏） -->
+                <div id="role-list-section" class="card" style="display:none;">
                     <div class="card-body p-0">
+                        <!-- 角色管理操作按钮 -->
+                        <div class="d-flex justify-content-between align-items-center mb-3 px-3 pt-3">
+                            <div></div>
+                            <div>
+                                <button class="btn btn-outline-danger me-2">批量禁用</button>
+                                <button class="btn btn-outline-success me-2">批量启用</button>
+                                <button class="btn btn-outline-secondary me-2">批量删除</button>
+                                <button class="btn btn-primary me-2" id="addRoleBtn">
+                                    <i class="fas fa-plus me-1"></i>添加角色
+                                </button>
+                                <button class="btn btn-outline-secondary" id="refreshRoleBtn">
+                                    <i class="fas fa-sync-alt me-1"></i>刷新
+                                </button>
+                            </div>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-hover mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th width="40">
-                                            <input type="checkbox" class="form-check-input">
-                                        </th>
-                                        <th>应用名称</th>
-                                        <th>应用ID</th>
-                                        <th>认证协议</th>
+                                        <th>角色名称</th>
+                                        <th>描述</th>
                                         <th>创建时间</th>
-                                        <th width="150">操作</th>
+                                        <th width="120">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <!-- 动态渲染 -->
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                    <!-- 角色管理分页条 -->
                     <div class="card-footer d-flex justify-content-between align-items-center">
-                        <div>
-                            <!-- 批量操作按钮已移动到上方 -->
+                        <div></div>
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1">上一页</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">下一页</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- 用户列表表格（初始隐藏） -->
+                <div id="user-list-section" class="card" style="display:none;">
+                    <div class="card-body p-0">
+                        <!-- 用户管理操作按钮 -->
+                        <div class="d-flex justify-content-between align-items-center mb-3 px-3 pt-3">
+                            <div></div>
+                            <div>
+                                <button class="btn btn-outline-danger me-2">批量禁用</button>
+                                <button class="btn btn-outline-success me-2">批量启用</button>
+                                <button class="btn btn-outline-secondary me-2">批量删除</button>
+                                <button class="btn btn-primary me-2" id="addUserBtn">
+                                    <i class="fas fa-plus me-1"></i>添加用户
+                                </button>
+                                <button class="btn btn-outline-secondary" id="refreshUserBtn">
+                                    <i class="fas fa-sync-alt me-1"></i>刷新
+                                </button>
+                            </div>
                         </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>用户名</th>
+                                        <th>昵称</th>
+                                        <th>创建时间</th>
+                                        <th width="120">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 动态渲染 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- 用户管理分页条 -->
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <div></div>
                         <nav>
                             <ul class="pagination pagination-sm mb-0">
                                 <li class="page-item disabled">
@@ -197,15 +313,23 @@
                                             <input type="text" class="form-control" required>
                                         </div>
                                     </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">应用地址</label>
+                                            <input type="url" class="form-control" name="appUrl"
+                                                placeholder="https://example.com">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">应用图标URL</label>
+                                            <input type="url" class="form-control" name="appIcon"
+                                                placeholder="https://example.com/icon.png">
+                                        </div>
+                                    </div>
                                     <div class="mb-3">
                                         <label class="form-label">应用描述</label>
                                         <textarea class="form-control" rows="2"></textarea>
                                     </div>
                                     <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label">应用图标</label>
-                                            <input type="file" class="form-control">
-                                        </div>
                                         <div class="col-md-6">
                                             <label class="form-label">认证协议</label>
                                             <select class="form-select">
@@ -230,6 +354,109 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- 添加/编辑角色模态框 -->
+                <div class="modal fade" id="roleModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">添加角色</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="roleForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">角色名称</label>
+                                        <input type="text" class="form-control" name="roleName" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">描述</label>
+                                        <textarea class="form-control" name="roleDesc" rows="2"></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" id="saveRoleBtn">保存</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 添加/编辑用户模态框 -->
+                <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">添加用户</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="userForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">用户名</label>
+                                        <input type="text" class="form-control" name="username" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">昵称</label>
+                                        <input type="text" class="form-control" name="nickname">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">登录密码</label>
+                                        <input type="password" class="form-control" name="password"
+                                            autocomplete="new-password">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" id="saveUserBtn">保存</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 用户-角色分配弹窗 -->
+                <div class="modal fade" id="roleUserModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">分配用户</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="roleUserList" class="list-group">
+                                    <!-- 动态渲染用户列表 -->
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 角色授权模态框 -->
+                <div class="modal fade" id="grantRoleModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">角色授权</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="grantRoleList" class="list-group"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -244,17 +471,143 @@
         document.addEventListener('DOMContentLoaded', function () {
             console.log('SSO管理平台已加载');
 
-            // 绑定应用管理菜单点击事件
-            const appManageMenu = document.querySelector('.list-group-item');
-            if (appManageMenu) {
-                appManageMenu.addEventListener('click', function (e) {
+            const menuItems = document.querySelectorAll('.list-group-item');
+            menuItems.forEach(item => {
+                item.addEventListener('click', function (e) {
                     e.preventDefault();
-                    loadAppList();
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    if (this.textContent.includes('应用管理')) {
+                        document.getElementById('app-manage-section').style.display = '';
+                        document.getElementById('role-list-section').style.display = 'none';
+                        document.getElementById('user-list-section').style.display = 'none';
+                        loadAppList();
+                    } else if (this.textContent.includes('角色管理')) {
+                        document.getElementById('app-manage-section').style.display = 'none';
+                        document.getElementById('role-list-section').style.display = '';
+                        document.getElementById('user-list-section').style.display = 'none';
+                        loadRoleList();
+                    } else if (this.textContent.includes('用户管理')) {
+                        document.getElementById('app-manage-section').style.display = 'none';
+                        document.getElementById('role-list-section').style.display = 'none';
+                        document.getElementById('user-list-section').style.display = '';
+                        loadUserList();
+                    }
                 });
+            });
+            // 默认显示应用管理
+            document.getElementById('app-manage-section').style.display = '';
+            if (document.getElementById('role-list-section')) {
+                document.getElementById('role-list-section').style.display = 'none';
             }
-
-            // 页面加载时自动加载应用列表
+            if (document.getElementById('user-list-section')) {
+                document.getElementById('user-list-section').style.display = 'none';
+            }
             loadAppList();
+
+            // 角色管理添加/刷新按钮事件
+            document.getElementById('addRoleBtn').onclick = function () {
+                // 重置表单
+                document.getElementById('roleForm').reset();
+                document.querySelector('#roleModal .modal-title').textContent = '添加角色';
+                const modal = new bootstrap.Modal(document.getElementById('roleModal'));
+                modal.show();
+            };
+            document.getElementById('refreshRoleBtn').onclick = function () {
+                loadRoleList();
+            };
+            document.getElementById('saveRoleBtn').onclick = async function () {
+                const form = document.getElementById('roleForm');
+                const roleName = form.roleName.value.trim();
+                const roleDesc = form.roleDesc.value.trim();
+                if (!roleName) {
+                    form.roleName.focus();
+                    return;
+                }
+                const btn = this;
+                btn.disabled = true;
+                btn.textContent = '保存中...';
+                try {
+                    let url = '/api/role/add';
+                    let body = { roleName, roleDesc };
+                    if (editingRoleId) {
+                        url = '/api/role/update';
+                        body = { id: editingRoleId, roleName, roleDesc };
+                    }
+                    const resp = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+                    if (!resp.ok) throw new Error('网络错误');
+                    const data = await resp.json();
+                    if (data.success === true || data.code === 200 || data.code === 0) {
+                        bootstrap.Modal.getInstance(document.getElementById('roleModal')).hide();
+                        loadRoleList();
+                    } else {
+                        throw new Error(data.message || data.msg || '保存失败');
+                    }
+                } catch (e) {
+                    console.error('保存失败: ' + e.message);
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = '保存';
+                    editingRoleId = null;
+                }
+            };
+
+            // 用户管理添加/刷新按钮事件
+            document.getElementById('addUserBtn').onclick = function () {
+                document.getElementById('userForm').reset();
+                document.querySelector('#userModal .modal-title').textContent = '添加用户';
+                editingUserId = null;
+                const modal = new bootstrap.Modal(document.getElementById('userModal'));
+                modal.show();
+            };
+            document.getElementById('refreshUserBtn').onclick = function () {
+                loadUserList();
+            };
+            document.getElementById('saveUserBtn').onclick = async function () {
+                const form = document.getElementById('userForm');
+                const username = form.username.value.trim();
+                const nickname = form.nickname.value.trim();
+                const password = form.password.value;
+                if (!username) {
+                    form.username.focus();
+                    return;
+                }
+                const btn = this;
+                btn.disabled = true;
+                btn.textContent = '保存中...';
+                try {
+                    let url = '/api/user/add';
+                    let body = { username, nickname, password };
+                    if (editingUserId) {
+                        url = '/api/user/update';
+                        body = { id: editingUserId, username, nickname };
+                        if (password) body.password = password;
+                    }
+                    const resp = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+                    if (!resp.ok) throw new Error('网络错误');
+                    const data = await resp.json();
+                    if (data.success === true || data.code === 200 || data.code === 0) {
+                        bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+                        loadUserList();
+                    } else {
+                        throw new Error(data.message || data.msg || '保存失败');
+                    }
+                } catch (e) {
+                    console.error('保存失败: ' + e.message);
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = '保存';
+                    editingUserId = null;
+                }
+            };
         });
 
         // 加载应用列表
@@ -326,19 +679,21 @@
             // 渲染每一行数据
             apps.forEach(app => {
                 const row = document.createElement('tr');
-                // 优先使用id字段，因为后端接口期望数字类型的id
                 const appId = app.id || app.clientId;
                 const displayClientId = app.clientId || app.id || '-';
+                const id = app.id;
 
                 row.innerHTML = `
                     <td><input type="checkbox" class="form-check-input" value="${appId}"></td>
                     <td>${app.clientName || app.appName || app.name || '-'}</td>
                     <td>${displayClientId}</td>
+                    <td><a href="${app.appUrl || ''}" target="_blank">${app.appUrl ? '访问' : '-'}</a></td>
+                    <td>${app.appIcon ? `<img src='${app.appIcon}' class='app-icon' alt='icon'>` : '-'}</td>
                     <td>${app.protocol || 'oauth2.0'}</td>
                     <td>${formatDate(app.createTime || app.createdAt || app.createDate)}</td>
                     <td>
                         <button class="btn btn-sm btn-outline-primary me-1" onclick="editApp(${appId})">编辑</button>
-                        <button class="btn btn-sm btn-outline-secondary" onclick="manageAuth(${appId})">授权</button>
+                        <button class="btn btn-sm btn-outline-secondary me-1" onclick="manageAuth(${id})">授权</button>
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -597,6 +952,20 @@
                 console.log('填充认证协议:', protocol);
             }
 
+            // 应用地址
+            const appUrlInput = form.querySelector('input[name="appUrl"]');
+            if (appUrlInput) {
+                appUrlInput.value = app.appUrl || '';
+                console.log('填充应用地址:', appUrlInput.value);
+            }
+
+            // 应用图标URL
+            const appIconInput = form.querySelector('input[name="appIcon"]');
+            if (appIconInput) {
+                appIconInput.value = app.appIcon || '';
+                console.log('填充应用图标URL:', appIconInput.value);
+            }
+
             console.log('应用详情渲染完成');
         }
 
@@ -631,15 +1000,21 @@
                                 <input type="text" class="form-control" required>
                             </div>
                         </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">应用地址</label>
+                                <input type="url" class="form-control" name="appUrl" placeholder="https://example.com">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">应用图标URL</label>
+                                <input type="url" class="form-control" name="appIcon" placeholder="https://example.com/icon.png">
+                            </div>
+                        </div>
                         <div class="mb-3">
                             <label class="form-label">应用描述</label>
                             <textarea class="form-control" rows="2"></textarea>
                         </div>
                         <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">应用图标</label>
-                                <input type="file" class="form-control">
-                            </div>
                             <div class="col-md-6">
                                 <label class="form-label">认证协议</label>
                                 <select class="form-select">
@@ -673,9 +1048,59 @@
         }
 
         // 管理授权
-        function manageAuth(clientId) {
-            console.log('管理授权:', clientId);
-            // TODO: 实现管理授权功能
+        async function manageAuth(id) {
+            console.log('管理授权:', id);
+            // 1. 获取所有角色
+            let allRoles = [];
+            try {
+                const resp = await fetch('/api/role/list');
+                const data = await resp.json();
+                allRoles = Array.isArray(data) ? data : (data.data || data.result || []);
+            } catch (e) {
+                document.getElementById('grantRoleList').innerHTML = '<div class="text-danger">加载角色失败</div>';
+                new bootstrap.Modal(document.getElementById('grantRoleModal')).show();
+                return;
+            }
+            // 2. 获取已授权角色
+            let grantedRoles = [];
+            try {
+                const resp = await fetch(`/api/roleApp/list?clientId=${encodeURIComponent(id)}`);
+                const data = await resp.json();
+                grantedRoles = Array.isArray(data) ? data : (data.data || data.result || []);
+            } catch (e) { }
+            const grantedRoleIds = new Set(grantedRoles.map(r => r.id));
+            // 3. 渲染复选框
+            let html = '';
+            allRoles.forEach(role => {
+                const checked = grantedRoleIds.has(role.id) ? 'checked' : '';
+                html += `<div class="list-group-item d-flex align-items-center">
+                    <input type="checkbox" class="form-check-input me-2" id="grantRoleCheck${role.id}" ${checked} onchange="toggleGrantRole(${id}, ${role.id}, this.checked)">
+                    <label class="form-check-label flex-grow-1" for="grantRoleCheck${role.id}">${role.roleName} <span class="text-muted ms-2">${role.roleDesc || ''}</span></label>
+                </div>`;
+            });
+            document.getElementById('grantRoleList').innerHTML = html;
+            new bootstrap.Modal(document.getElementById('grantRoleModal')).show();
+        }
+
+        // 勾选/取消授权
+        function toggleGrantRole(id, roleId, checked) {
+            if (checked) {
+                fetch('/api/roleApp/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ clientId: id, roleId: Number(roleId) })
+                }).then(res => res.json()).then(data => {
+                    // 可选：提示授权成功
+                });
+            } else {
+                fetch('/api/roleApp/deleteByClientAndRole', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ clientId: id, roleId: Number(roleId) })
+                }).then(res => res.json()).then(data => {
+                    // 可选：提示取消授权成功
+                });
+            }
         }
 
         // 刷新按钮点击事件
@@ -709,6 +1134,8 @@
                 const description = form.querySelector('textarea').value.trim();
                 const protocol = form.querySelector('select.form-select').value;
                 const redirectUri = form.querySelector('input[type="url"]').value.trim();
+                const appUrl = form.querySelector('input[name="appUrl"]').value.trim();
+                const appIcon = form.querySelector('input[name="appIcon"]').value.trim();
 
                 // 验证必填字段
                 if (!appName) {
@@ -731,7 +1158,9 @@
                     clientId: clientId,
                     description: description,
                     protocol: protocol,
-                    redirectUri: redirectUri
+                    redirectUri: redirectUri,
+                    appUrl: appUrl,
+                    appIcon: appIcon
                 };
 
                 console.log('更新数据:', updateData);
@@ -783,6 +1212,158 @@
                     saveBtn.disabled = false;
                 }
             }
+        }
+
+        // 加载角色列表
+        async function loadRoleList() {
+            document.querySelector('.card').style.display = 'none';
+            document.getElementById('role-list-section').style.display = '';
+            try {
+                const response = await fetch('/api/role/list', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!response.ok) throw new Error('网络错误');
+                const data = await response.json();
+                const list = Array.isArray(data) ? data : (data.data || data.result || []);
+                renderRoleList(list);
+            } catch (e) {
+                renderRoleList([]);
+            }
+        }
+        // 渲染角色表格
+        function escapeHtml(str) {
+            return String(str || '').replace(/["'\\]/g, match => ({
+                '"': '&quot;', "'": '&#39;', '\\': '\\\\'
+            }[match]));
+        }
+        function renderRoleList(roles) {
+            const tbody = document.querySelector('#role-list-section tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!roles || roles.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">暂无角色数据</td></tr>`;
+                return;
+            }
+            roles.forEach(role => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${role.roleName || '-'}</td>
+                    <td>${role.roleDesc || '-'}</td>
+                    <td>${role.createTime ? new Date(role.createTime).toLocaleDateString() : '-'}</td>
+                    <td style="white-space:nowrap;">
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editRole(${role.id}, '${escapeHtml(role.roleName)}', '${escapeHtml(role.roleDesc)}')">编辑</button>
+                        <button class="btn btn-sm btn-outline-primary" onclick="openRoleUserModal(${role.id})">用户管理</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 角色编辑逻辑
+        let editingRoleId = null;
+        function editRole(id, roleName, roleDesc) {
+            editingRoleId = id;
+            document.getElementById('roleForm').reset();
+            document.querySelector('#roleModal .modal-title').textContent = '编辑角色';
+            document.getElementById('roleForm').roleName.value = roleName;
+            document.getElementById('roleForm').roleDesc.value = roleDesc;
+            const modal = new bootstrap.Modal(document.getElementById('roleModal'));
+            modal.show();
+        }
+
+        // 加载用户列表
+        async function loadUserList() {
+            document.getElementById('user-list-section').style.display = '';
+            try {
+                const response = await fetch('/api/user/list', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!response.ok) throw new Error('网络错误');
+                const data = await response.json();
+                const list = Array.isArray(data) ? data : (data.data || data.result || []);
+                renderUserList(list);
+            } catch (e) {
+                renderUserList([]);
+            }
+        }
+        // 渲染用户表格
+        function renderUserList(users) {
+            const tbody = document.querySelector('#user-list-section tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!users || users.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">暂无用户数据</td></tr>`;
+                return;
+            }
+            users.forEach(user => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${user.username || '-'}</td>
+                    <td>${user.nickname || '-'}</td>
+                    <td>${user.createTime ? new Date(user.createTime).toLocaleDateString() : '-'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editUser(${user.id}, '${escapeHtml(user.username)}', '${escapeHtml(user.nickname)}')">编辑</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        // 用户编辑逻辑
+        let editingUserId = null;
+        function editUser(id, username, nickname) {
+            editingUserId = id;
+            document.getElementById('userForm').reset();
+            document.querySelector('#userModal .modal-title').textContent = '编辑用户';
+            document.getElementById('userForm').username.value = username;
+            document.getElementById('userForm').nickname.value = nickname;
+            const modal = new bootstrap.Modal(document.getElementById('userModal'));
+            modal.show();
+        }
+
+        // 用户-角色分配弹窗逻辑
+        function openRoleUserModal(roleId) {
+            // 先获取所有用户
+            fetch('/api/user/list')
+                .then(res => res.json())
+                .then(userData => {
+                    const allUsers = Array.isArray(userData) ? userData : (userData.data || userData.result || []);
+                    // 再获取已关联用户
+                    fetch(`/api/user-role/list?roleId=${roleId}`)
+                        .then(res => res.json())
+                        .then(checkedData => {
+                            const checkedUsers = Array.isArray(checkedData) ? checkedData : (checkedData.data || checkedData.result || []);
+                            const checkedUserIds = new Set(checkedUsers.map(u => u.id));
+                            // 渲染用户列表
+                            const listDiv = document.getElementById('roleUserList');
+                            listDiv.innerHTML = '';
+                            allUsers.forEach(user => {
+                                const div = document.createElement('div');
+                                div.className = 'list-group-item d-flex align-items-center';
+                                div.innerHTML = `
+                                    <input type="checkbox" class="form-check-input me-2" id="userCheck${user.id}" ${checkedUserIds.has(user.id) ? 'checked' : ''}>
+                                    <label class="form-check-label flex-grow-1" for="userCheck${user.id}">${user.username} <span class="text-muted ms-2">${user.nickname || ''}</span></label>
+                                `;
+                                // 绑定勾选事件
+                                div.querySelector('input').onchange = function () {
+                                    if (this.checked) {
+                                        fetch('/api/user-role/add', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ userId: user.id, roleId })
+                                        });
+                                    } else {
+                                        // 如有删除接口可在此调用
+                                        // fetch('/api/user-role/delete', { ... })
+                                    }
+                                };
+                                listDiv.appendChild(div);
+                            });
+                            // 显示弹窗
+                            new bootstrap.Modal(document.getElementById('roleUserModal')).show();
+                        });
+                });
         }
     </script>
 </body>

@@ -13,13 +13,28 @@ public class SysUserController {
     @Autowired
     private SysUserService sysUserService;
 
-    @PostMapping("/register")
-    public Result<Boolean> register(@RequestBody SysUser user) {
-        return Result.success(sysUserService.save(user));
-    }
-
     @GetMapping("/{id}")
     public Result<SysUser> getById(@PathVariable Long id) {
         return Result.success(sysUserService.getById(id));
     }
-} 
+
+    @PostMapping("/add")
+    public Result<Boolean> add(@RequestBody SysUser user) {
+        return Result.success(sysUserService.save(user));
+    }
+
+    @PostMapping("/update")
+    public Result<Boolean> update(@RequestBody SysUser user) {
+        return Result.success(sysUserService.updateById(user));
+    }
+
+    @PostMapping("/delete/{id}")
+    public Result<Boolean> delete(@PathVariable Long id) {
+        return Result.success(sysUserService.removeById(id));
+    }
+
+    @GetMapping("/list")
+    public Result<?> list() {
+        return Result.success(sysUserService.list());
+    }
+}

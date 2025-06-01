@@ -16,7 +16,7 @@ public class CallbackController {
     private OAuthService oAuthService;
 
     @GetMapping("/callback")
-    public Result<TokenResponse> login(@RequestParam String code) {
+    public Result<TokenResponse> callback(@RequestParam String code) {
         TokenResponse exchangeToken = oAuthService.exchangeToken(code, "test", "test",
                 "http://localhost:8080/callback");
         ;

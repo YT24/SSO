@@ -1,5 +1,7 @@
 package com.auth.sso.entity;
 
+import java.time.LocalDateTime;
+
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -10,4 +12,5 @@ public class SysUser {
     private String username;
     private String password;
     private String nickname;
-} 
+    private LocalDateTime createTime;
+}

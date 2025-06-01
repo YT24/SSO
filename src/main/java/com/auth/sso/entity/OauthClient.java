@@ -13,4 +13,6 @@ public class OauthClient {
     private String scope;
     private String protocol;
     private String appName;
+    private String appUrl;
+    private String appIcon;
 }
