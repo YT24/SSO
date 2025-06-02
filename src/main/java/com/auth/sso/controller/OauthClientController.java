@@ -13,11 +13,6 @@ public class OauthClientController {
     @Autowired
     private OauthClientService oauthClientService;
 
-    @PostMapping("/register")
-    public Result<Boolean> register(@RequestBody OauthClient client) {
-        return Result.success(oauthClientService.save(client));
-    }
-
     @GetMapping("/{id}")
     public Result<OauthClient> getById(@PathVariable Long id) {
         return Result.success(oauthClientService.getById(id));
