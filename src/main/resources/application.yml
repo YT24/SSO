@@ -58,4 +58,10 @@ knife4j:
 
 oauth2:
   access-token-expire-seconds: 3600      # access_token 有效期（秒）
-  refresh-token-expire-seconds: 2592000  # refresh_token 有效期（秒） 
+  refresh-token-expire-seconds: 2592000  # refresh_token 有效期（秒）
+
+sso:
+  server-url: http://localhost:8080   # SSO服务端地址
+  client-id: sso-client           # 你在SSO注册的client_id
+  client-secret: sso_secret   # 你在SSO注册的client_secret
+  redirect-uri: http://localhost:8081/sso/callback  # 业务系统回调地址   

@@ -8,11 +8,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     @Autowired
-    private LoginInterceptor loginInterceptor;
+    private SsoLoginInterceptor ssoLoginInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loginInterceptor)
-                .addPathPatterns("/**");
+        registry.addInterceptor(ssoLoginInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/sso/callback", "/static/**", "/public/**");
     }
 }
