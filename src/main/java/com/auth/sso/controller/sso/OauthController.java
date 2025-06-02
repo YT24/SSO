@@ -1,4 +1,4 @@
-package com.auth.sso.controller;
+package com.auth.sso.controller.sso;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
