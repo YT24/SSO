@@ -7,17 +7,21 @@ CREATE TABLE IF NOT EXISTS sys_user (
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP
 ) COMMENT='用户表';
 
--- 客户端表
-CREATE TABLE IF NOT EXISTS oauth_client (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    app_name VARCHAR(100) NOT NULL COMMENT '应用名称',
-    client_id VARCHAR(100) NOT NULL UNIQUE,
-    client_secret VARCHAR(100) NOT NULL,
-    redirect_uri VARCHAR(500) NOT NULL,
-    scope VARCHAR(200),
-    protocol VARCHAR(20) NOT NULL,
-    create_time DATETIME DEFAULT CURRENT_TIMESTAMP
-) COMMENT='SSO客户端表';
+-- sso.oauth_client definition
+CREATE TABLE `oauth_client` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `app_name` varchar(100) NOT NULL COMMENT '应用名称',
+  `app_url` varchar(100) NOT NULL COMMENT '应用地址',
+  `app_icon` varchar(100) NOT NULL COMMENT '应用图标',
+  `client_id` varchar(100) NOT NULL,
+  `client_secret` varchar(100) NOT NULL,
+  `redirect_uri` varchar(500) NOT NULL,
+  `scope` varchar(200) DEFAULT NULL,
+  `protocol` varchar(20) NOT NULL,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `client_id` (`client_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='SSO客户端表';
 
 -- 授权码表
 CREATE TABLE IF NOT EXISTS oauth_code (
