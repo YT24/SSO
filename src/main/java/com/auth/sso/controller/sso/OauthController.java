@@ -7,9 +7,11 @@ import com.auth.sso.common.Result;
 import com.auth.sso.service.OAuthService;
 import com.auth.sso.util.RedisUtil;
 import com.auth.sso.vo.TokenResponse;
+import com.auth.sso.config.SsoClientProperties;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 
 @RestController
 @RequestMapping("/oauth2")
@@ -20,6 +22,34 @@ public class OauthController {
 
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private SsoClientProperties ssoClientProperties;
+
+    @PostMapping("/login")
+    public void login(
+            @RequestParam String username,
+            @RequestParam String password,
+            @RequestParam String client_id,
+            @RequestParam String redirect_uri,
+            @RequestParam(required = false) String state,
+            HttpServletResponse response) throws IOException {
+        // 校验用户名密码，假设oAuthService.checkUser返回userId，校验失败返回null
+        Long userId = oAuthService.checkUser(username, password);
+        if (userId == null) {
+            response.setStatus(401);
+            response.getWriter().write("用户名或密码错误");
+            return;
+        }
+        // 重定向生成code
+        String redirectUrl = "http://localhost:8080/oauth2/authorize"
+                + "?client_id=" + URLEncoder.encode(client_id, "UTF-8")
+                + "&redirect_uri=" + URLEncoder.encode(redirect_uri, "UTF-8")
+                + "&response_type=code"
+                + "&user_id=" + userId
+                + (state != null ? "&state=" + URLEncoder.encode(state, "UTF-8") : "");
+        response.sendRedirect(redirectUrl);
+    }
 
     // 授权码获取（需登录后访问）
     @GetMapping("/authorize")
@@ -33,6 +63,19 @@ public class OauthController {
             HttpServletResponse response) throws Exception {
         String code = oAuthService.generateCode(client_id, redirect_uri, scope, user_id);
         response.sendRedirect(redirect_uri + "?code=" + code + (state != null ? "&state=" + state : ""));
+    }
+
+    @GetMapping("/callback")
+    public void ssoCallback(@RequestParam("code") String code,
+            HttpServletResponse response) throws java.io.IOException {
+        // 1. 用 code 换取 access_token 和用户信息
+        TokenResponse tokenResponse = oAuthService.exchangeToken(code,
+                ssoClientProperties.getClientId(),
+                ssoClientProperties.getClientSecret(),
+                ssoClientProperties.getRedirectUri());
+        // 重定向到应用首页并带上token参数
+        String redirectUrl = ssoClientProperties.getServerUrl() + "?token=" + tokenResponse.getAccess_token();
+        response.sendRedirect(redirectUrl);
     }
 
     // 换取token
@@ -64,27 +107,5 @@ public class OauthController {
             @RequestParam String client_id,
             @RequestParam String client_secret) {
         return Result.success(oAuthService.refreshToken(refresh_token, client_id, client_secret));
-    }
-
-    @PostMapping("/login")
-    public void login(
-            @RequestParam String username,
-            @RequestParam String password,
-            @RequestParam String client_id,
-            @RequestParam String redirect_uri,
-            @RequestParam(required = false) String state,
-            HttpServletResponse response) throws IOException {
-        // 校验用户名密码，假设oAuthService.checkUser返回userId，校验失败返回null
-        Long userId = oAuthService.checkUser(username, password);
-        if (userId == null) {
-            response.setStatus(401);
-            response.getWriter().write("用户名或密码错误");
-            return;
-        }
-        // 生成授权码
-        String code = oAuthService.generateCode(client_id, redirect_uri, null, userId);
-        // 跳转到 redirect_uri?code=xxx&state=xxx
-        String redirect = redirect_uri + "?code=" + code + (state != null ? "&state=" + state : "");
-        response.sendRedirect(redirect);
     }
 }

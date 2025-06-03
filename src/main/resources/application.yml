@@ -9,7 +9,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   mvc:
     pathmatch:
-      matching-strategy: ant_path_matcher
+      matching-strategy: ANT_PATH_MATCHER
   redis:
     host: localhost
     port: 6379
@@ -58,6 +58,6 @@ oauth2:
 
 sso:
   server-url: http://localhost:8080   # SSO服务端地址
-  client-id: sso-client           # 你在SSO注册的client_id
-  client-secret: sso_secret   # 你在SSO注册的client_secret
-  redirect-uri: http://localhost:8081/sso/callback  # 业务系统回调地址   
+  client-id: sso-client # 你在SSO注册的client_id
+  client-secret: sso-secret # 你在SSO注册的client_secret
+  redirect-uri: http://localhost:8080/oauth2/callback  # 业务系统回调地址   

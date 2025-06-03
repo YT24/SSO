@@ -556,6 +556,28 @@
         const app = createApp(App);
         app.use(ElementPlus);
         app.mount('#app');
+
+        // 1. 登录成功后自动从URL参数获取token并存储到localStorage
+        function getQueryParam(name) {
+            const match = window.location.search.match(new RegExp('[?&]' + name + '=([^&]*)'));
+            return match ? decodeURIComponent(match[1]) : null;
+        }
+        const token = getQueryParam('token');
+        if (token) {
+            localStorage.setItem('token', token);
+            // 可选：清理URL中的token参数
+            const url = new URL(window.location);
+            url.searchParams.delete('token');
+            window.history.replaceState({}, document.title, url.pathname + url.search);
+        }
+        // 2. axios请求自动携带token
+        axios.interceptors.request.use(config => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                config.headers['Authorization'] = 'Bearer ' + token;
+            }
+            return config;
+        });
     </script>
 </body>
 
