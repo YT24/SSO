@@ -1,6 +1,8 @@
 package com.auth.sso.service.impl;
 
-import java.util.Base64;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,10 @@ import com.auth.sso.util.TokenGenerator;
 import com.auth.sso.vo.TokenResponse;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
 @Service
 public class OAuthServiceImpl implements OAuthService {
 
@@ -28,6 +34,15 @@ public class OAuthServiceImpl implements OAuthService {
     private RedisUtil redisUtil;
     @Autowired
     private Oauth2Properties oauth2Properties;
+
+    // JWT密钥对缓存
+    private static KeyPair keyPair = null;
+    public static KeyPair getOrCreateKeyPair() {
+        if (keyPair == null) {
+            keyPair = Keys.keyPairFor(SignatureAlgorithm.RS256);
+        }
+        return keyPair;
+    }
 
     @Override
     public String generateCode(String clientId, String redirectUri, String scope, Long userId) {
@@ -64,10 +79,6 @@ public class OAuthServiceImpl implements OAuthService {
         }
         String accessToken = TokenGenerator.generateToken(32);
         String refreshToken = TokenGenerator.generateToken(32);
-        String idToken = Base64.getEncoder().encodeToString(
-                ("{\"sub\":\"" + userId + "\",\"aud\":\"" + clientId + "\",\"exp\":"
-                        + (System.currentTimeMillis() / 1000 + oauth2Properties.getAccessTokenExpireSeconds()) + "}")
-                        .getBytes());
         String tokenKey = "oauth:token:" + accessToken;
         String refreshKey = "oauth:refresh:" + refreshToken;
         String tokenValue = userId + "," + clientId + "," + (codeScope == null ? "" : codeScope);
@@ -78,7 +89,7 @@ public class OAuthServiceImpl implements OAuthService {
         resp.setAccess_token(accessToken);
         resp.setRefresh_token(refreshToken);
         resp.setExpires_in(oauth2Properties.getAccessTokenExpireSeconds());
-        resp.setId_token(idToken);
+        resp.setId_token(null); // 如需可生成新id_token
         return resp;
     }
 
@@ -138,6 +149,50 @@ public class OAuthServiceImpl implements OAuthService {
                 .eq("username", username)
                 .eq("password", password));
         return user != null ? user.getId() : null;
+    }
+
+    @Override
+    public TokenResponse exchangeTokenByPassword(String username, String password, String clientId, String clientSecret, String scope) {
+        // 校验用户名密码
+        Long userId = checkUser(username, password);
+        if (userId == null) {
+            throw new RuntimeException("用户名或密码错误");
+        }
+        // 校验client_id和client_secret
+        OauthClient client = oauthClientMapper.selectOne(new QueryWrapper<OauthClient>()
+                .eq("client_id", clientId)
+                .eq("client_secret", clientSecret));
+        if (client == null) {
+            throw new RuntimeException("客户端信息错误");
+        }
+        // 生成access_token、refresh_token
+        String accessToken = TokenGenerator.generateToken(32);
+        String refreshToken = TokenGenerator.generateToken(32);
+        String tokenKey = "oauth:token:" + accessToken;
+        String refreshKey = "oauth:refresh:" + refreshToken;
+        String tokenValue = userId + "," + clientId + "," + (scope == null ? "" : scope);
+        redisUtil.set(tokenKey, tokenValue, oauth2Properties.getAccessTokenExpireSeconds(), TimeUnit.SECONDS);
+        redisUtil.set(refreshKey, tokenValue, oauth2Properties.getRefreshTokenExpireSeconds(), TimeUnit.SECONDS);
+        // 生成id_token（JWT RS256签名）
+        KeyPair kp = getOrCreateKeyPair();
+        PrivateKey privateKey = kp.getPrivate();
+        long now = System.currentTimeMillis();
+        long exp = now + oauth2Properties.getAccessTokenExpireSeconds() * 1000L;
+        String idToken = Jwts.builder()
+                .setSubject(String.valueOf(userId))
+                .setAudience(clientId)
+                .setIssuer("sso-server")
+                .setIssuedAt(new Date(now))
+                .setExpiration(new Date(exp))
+                .claim("username", username)
+                .signWith(privateKey, SignatureAlgorithm.RS256)
+                .compact();
+        TokenResponse resp = new TokenResponse();
+        resp.setAccess_token(accessToken);
+        resp.setRefresh_token(refreshToken);
+        resp.setExpires_in(oauth2Properties.getAccessTokenExpireSeconds());
+        resp.setId_token(idToken);
+        return resp;
     }
 
     public static class UserInfoVO {

@@ -15,4 +15,9 @@ public interface OAuthService {
      * 校验用户名密码，成功返回userId，失败返回null
      */
     Long checkUser(String username, String password);
+
+    /**
+     * OIDC password模式，用户名密码直接换token
+     */
+    TokenResponse exchangeTokenByPassword(String username, String password, String clientId, String clientSecret, String scope);
 }
