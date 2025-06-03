@@ -181,7 +181,7 @@ public class OAuthServiceImpl implements OAuthService {
         String idToken = Jwts.builder()
                 .setSubject(String.valueOf(userId))
                 .setAudience(clientId)
-                .setIssuer("sso-server")
+                .setIssuer("http://127.0.0.1:8080/odic/jwks")
                 .setIssuedAt(new Date(now))
                 .setExpiration(new Date(exp))
                 .claim("username", username)
