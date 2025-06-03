@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/sso?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3300/sso?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
     username: root
-    password: root1234
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   mvc:
     pathmatch:
@@ -60,4 +60,7 @@ sso:
   server-url: http://localhost:8080   # SSO服务端地址
   client-id: sso-client # 你在SSO注册的client_id
   client-secret: sso-secret # 你在SSO注册的client_secret
-  redirect-uri: http://localhost:8080/oauth2/callback  # 业务系统回调地址   
+  redirect-uri: http://localhost:8080/oauth2/callback  # 业务系统回调地址  
+
+
+  

@@ -594,11 +594,11 @@
         (function checkLoginAndRedirectSSO() {
             const urlToken = getQueryParam('token');
             const localToken = localStorage.getItem('token');
-            console.log('[SSO] localStorage token:', localToken, 'URL token:', urlToken);
             if (!localToken && !urlToken) {
-                const currentUrl = encodeURIComponent(window.location.href);
-                console.log('[SSO] 未检测到token，跳转SSO登录', currentUrl);
-                window.location.href = '/oauth2/login.html?redirect=' + currentUrl;
+                // 获取当前hash路由
+                const hash = location.hash ? encodeURIComponent(location.hash) : '';
+                // 跳转到登录页并带上redirect参数
+                window.location.href = '/oauth2/login.html' + (hash ? ('?redirect=' + hash) : '');
             }
         })();
         // 2. axios请求自动携带token

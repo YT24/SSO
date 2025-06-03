@@ -96,8 +96,7 @@
         const client_id = getQueryParam('client_id');
         const client_secret = getQueryParam('client_secret');
         const redirect_uri = getQueryParam('redirect_uri') || '/';
-        const requestUrl = getQueryParam('requestUrl');
-        const redirect = requestUrl || getQueryParam('redirect');
+        const redirectHash = getQueryParam('redirect');
 
         document.getElementById('loginForm').onsubmit = async function (e) {
             e.preventDefault();
@@ -110,8 +109,7 @@
                 username,
                 password,
                 client_id,
-                redirect_uri,
-                redirect
+                redirect_uri
             });
             try {
                 const resp = await fetch('/oauth2/login', {
@@ -120,11 +118,11 @@
                     body: params
                 });
                 if (resp.redirected) {
-                    let url = new URL(resp.url);
-                    if (redirect) {
-                        url.searchParams.set('redirect', redirect);
+                    if (redirectHash) {
+                        window.location.href = decodeURIComponent(redirectHash);
+                    } else {
+                        window.location.href = resp.url;
                     }
-                    window.location.href = url.toString();
                 } else {
                     const msg = await resp.text();
                     document.getElementById('errorMsg').textContent = msg || '登录失败';
