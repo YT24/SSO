@@ -1,18 +1,19 @@
 package com.auth.sso.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerInterceptor;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.net.URLEncoder;
-import java.util.UUID;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.util.UUID;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
 public class SsoLoginInterceptor implements HandlerInterceptor {
@@ -22,6 +23,11 @@ public class SsoLoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
+        String uri = request.getRequestURI();
+        if (uri.startsWith("/error") || uri.startsWith("/.well-known/")) {
+            return true;
+        }
+        System.out.println(uri);
         String token = getToken(request);
         if (token != null && !token.isEmpty()) {
             // 校验token有效性
@@ -32,11 +38,25 @@ public class SsoLoginInterceptor implements HandlerInterceptor {
         }
         // 未登录，重定向到SSO登录页
         String state = UUID.randomUUID().toString().replace("-", "");
+        String requestUrl = request.getRequestURL().toString();
+        String queryString = request.getQueryString();
+        if (queryString != null) {
+            requestUrl += "?" + queryString;
+        }
+        // 拼接前端hash路由
+        String referer = request.getHeader("Referer");
+        if (referer != null && referer.contains("#")) {
+            String hash = referer.substring(referer.indexOf("#"));
+            if (!requestUrl.contains("#")) {
+                requestUrl += hash;
+            }
+        }
         String loginUrl = ssoClientProperties.getServerUrl() + "/login.html"
                 + "?client_id=" + URLEncoder.encode(ssoClientProperties.getClientId(), "UTF-8")
                 + "&client_secret=" + URLEncoder.encode(ssoClientProperties.getClientSecret(), "UTF-8")
                 + "&redirect_uri=" + URLEncoder.encode(ssoClientProperties.getRedirectUri(), "UTF-8")
-                + "&state=" + state;
+                + "&state=" + state
+                + "&requestUrl=" + URLEncoder.encode(requestUrl, "UTF-8");
         response.sendRedirect(loginUrl);
         return false;
     }

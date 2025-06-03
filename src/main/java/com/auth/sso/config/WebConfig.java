@@ -18,13 +18,15 @@ public class WebConfig implements WebMvcConfigurer {
                         "/oauth2/callback",
                         "/static/**",
                         "/public/**",
-                        "/api/**",
                         "/oauth2/authorize",
                         "/oauth2/token",
                         "/oauth2/userinfo",
                         "/oauth2/check_token",
                         "/oauth2/refresh_token",
                         "/oauth2/login",
-                        "/login.html");
+                        "/login.html",
+                        "/",
+                        "/index.html",
+                        "/favicon.ico");
     }
 }

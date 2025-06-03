@@ -371,6 +371,19 @@
                 const bindRoleId = ref(null);
                 const myAppList = ref([]);
 
+                const menuHashMap = {
+                    'my-apps': '/my-apps',
+                    'app-manage': '/app-manage',
+                    'role-manage': '/role-manage',
+                    'user-manage': '/user-manage'
+                };
+                const hashMenuMap = {
+                    '/my-apps': 'my-apps',
+                    '/app-manage': 'app-manage',
+                    '/role-manage': 'role-manage',
+                    '/user-manage': 'user-manage'
+                };
+
                 const fetchAppList = async () => {
                     const res = await axios.get('/api/client/list');
                     appList.value = res.data.data || [];
@@ -529,15 +542,26 @@
                     }
                 });
 
-                const handleMenuSelect = (key) => {
-                    activeMenu.value = key;
-                    if (key === 'app-manage') fetchAppList();
-                    if (key === 'role-manage') fetchRoleList();
-                    if (key === 'user-manage') fetchUserList();
-                    if (key === 'my-apps') fetchMyAppList();
+                const setMenuByHash = () => {
+                    const hash = location.hash.replace('#', '') || '/app-manage';
+                    const menu = hashMenuMap[hash] || 'app-manage';
+                    activeMenu.value = menu;
+                    if (menu === 'app-manage') fetchAppList();
+                    if (menu === 'role-manage') fetchRoleList();
+                    if (menu === 'user-manage') fetchUserList();
+                    if (menu === 'my-apps') fetchMyAppList();
                 };
 
-                onMounted(fetchAppList);
+                // hash 变化监听
+                window.addEventListener('hashchange', setMenuByHash);
+                // 页面加载时
+                onMounted(() => {
+                    setMenuByHash();
+                });
+                // 菜单点击时切换 hash
+                const handleMenuSelect = (key) => {
+                    location.hash = menuHashMap[key] || '/app-manage';
+                };
 
                 return {
                     activeMenu, appList, roleList, userList, appModalVisible, grantModalVisible, appForm, editingApp,
@@ -553,10 +577,6 @@
             }
         };
 
-        const app = createApp(App);
-        app.use(ElementPlus);
-        app.mount('#app');
-
         // 1. 登录成功后自动从URL参数获取token并存储到localStorage
         function getQueryParam(name) {
             const match = window.location.search.match(new RegExp('[?&]' + name + '=([^&]*)'));
@@ -564,20 +584,49 @@
         }
         const token = getQueryParam('token');
         if (token) {
+            console.log('[SSO] URL参数token:', token);
             localStorage.setItem('token', token);
-            // 可选：清理URL中的token参数
             const url = new URL(window.location);
             url.searchParams.delete('token');
             window.history.replaceState({}, document.title, url.pathname + url.search);
         }
+        // 检查 token，如果没有则跳转 SSO
+        (function checkLoginAndRedirectSSO() {
+            const urlToken = getQueryParam('token');
+            const localToken = localStorage.getItem('token');
+            console.log('[SSO] localStorage token:', localToken, 'URL token:', urlToken);
+            if (!localToken && !urlToken) {
+                const currentUrl = encodeURIComponent(window.location.href);
+                console.log('[SSO] 未检测到token，跳转SSO登录', currentUrl);
+                window.location.href = '/oauth2/login.html?redirect=' + currentUrl;
+            }
+        })();
         // 2. axios请求自动携带token
         axios.interceptors.request.use(config => {
             const token = localStorage.getItem('token');
+            console.log('[SSO] axios请求携带token:', token, config.url);
             if (token) {
                 config.headers['Authorization'] = 'Bearer ' + token;
             }
             return config;
         });
+        // 响应拦截：如被重定向到login.html则跳转登录页
+        axios.interceptors.response.use(
+            function (response) {
+                if (typeof response.data === 'string' && response.data.indexOf('统一身份认证') !== -1) {
+                    window.location.href = '/oauth2/login.html';
+                    return Promise.reject(new Error('未登录，已跳转登录页'));
+                }
+                return response;
+            },
+            function (error) {
+                return Promise.reject(error);
+            }
+        );
+
+        const app = createApp(App);
+        app.use(ElementPlus);
+        app.mount('#app');
     </script>
 </body>
 

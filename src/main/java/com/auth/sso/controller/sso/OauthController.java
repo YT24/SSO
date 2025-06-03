@@ -33,6 +33,7 @@ public class OauthController {
             @RequestParam String client_id,
             @RequestParam String redirect_uri,
             @RequestParam(required = false) String state,
+            @RequestParam(required = false) String redirect,
             HttpServletResponse response) throws IOException {
         // 校验用户名密码，假设oAuthService.checkUser返回userId，校验失败返回null
         Long userId = oAuthService.checkUser(username, password);
@@ -41,13 +42,14 @@ public class OauthController {
             response.getWriter().write("用户名或密码错误");
             return;
         }
-        // 重定向生成code
+        // 重定向生成code，带上redirect参数
         String redirectUrl = "http://localhost:8080/oauth2/authorize"
                 + "?client_id=" + URLEncoder.encode(client_id, "UTF-8")
                 + "&redirect_uri=" + URLEncoder.encode(redirect_uri, "UTF-8")
                 + "&response_type=code"
                 + "&user_id=" + userId
-                + (state != null ? "&state=" + URLEncoder.encode(state, "UTF-8") : "");
+                + (state != null ? "&state=" + URLEncoder.encode(state, "UTF-8") : "")
+                + (redirect != null ? "&redirect=" + URLEncoder.encode(redirect, "UTF-8") : "");
         response.sendRedirect(redirectUrl);
     }
 
@@ -60,21 +62,36 @@ public class OauthController {
             @RequestParam(required = false) String scope,
             @RequestParam(required = false) String state,
             @RequestParam Long user_id, // 实际应从session获取
+            @RequestParam(required = false) String requestUrl,
             HttpServletResponse response) throws Exception {
         String code = oAuthService.generateCode(client_id, redirect_uri, scope, user_id);
-        response.sendRedirect(redirect_uri + "?code=" + code + (state != null ? "&state=" + state : ""));
+        // 带上redirect参数
+        String url = redirect_uri + "?code=" + code
+                + (state != null ? "&state=" + state : "")
+                + (requestUrl != null ? "&redirect=" + URLEncoder.encode(requestUrl, "UTF-8") : "");
+        response.sendRedirect(url);
     }
 
     @GetMapping("/callback")
     public void ssoCallback(@RequestParam("code") String code,
+            @RequestParam(value = "redirect", required = false) String redirect,
             HttpServletResponse response) throws java.io.IOException {
-        // 1. 用 code 换取 access_token 和用户信息
         TokenResponse tokenResponse = oAuthService.exchangeToken(code,
                 ssoClientProperties.getClientId(),
                 ssoClientProperties.getClientSecret(),
                 ssoClientProperties.getRedirectUri());
-        // 重定向到应用首页并带上token参数
-        String redirectUrl = ssoClientProperties.getServerUrl() + "?token=" + tokenResponse.getAccess_token();
+        String token = tokenResponse.getAccess_token();
+        String redirectUrl;
+        if (redirect != null && !redirect.isEmpty()) {
+            // 拼接 token 到 redirect
+            if (redirect.contains("?")) {
+                redirectUrl = redirect + "&token=" + token;
+            } else {
+                redirectUrl = redirect + "?token=" + token;
+            }
+        } else {
+            redirectUrl = ssoClientProperties.getServerUrl() + "?token=" + token;
+        }
         response.sendRedirect(redirectUrl);
     }
 
