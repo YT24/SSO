@@ -3,6 +3,10 @@ package com.auth.sso.controller.oidc;
 import com.auth.sso.common.Result;
 import com.auth.sso.service.OAuthService;
 import com.auth.sso.vo.TokenResponse;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,5 +57,32 @@ public class OidcTokenController {
         jwk.put("e", Base64.getUrlEncoder().withoutPadding().encodeToString(publicKey.getPublicExponent().toByteArray()));
         jwk.put("kid", "sso-key-1");
         return Collections.singletonMap("keys", Collections.singletonList(jwk));
+    }
+
+    /**
+     * 解析id_token获取用户信息
+     */
+    @GetMapping("/parse_id_token")
+    public Result<Map<String, Object>> parseIdToken(@RequestParam String id_token) {
+        try {
+            RSAPublicKey publicKey = (RSAPublicKey) OAuthServiceImpl.getOrCreateKeyPair().getPublic();
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(publicKey)
+                    .build()
+                    .parseClaimsJws(id_token)
+                    .getBody();
+                    
+            Map<String, Object> userInfo = new HashMap<>();
+            userInfo.put("sub", claims.getSubject());
+            userInfo.put("aud", claims.getAudience());
+            userInfo.put("iss", claims.getIssuer());
+            userInfo.put("exp", claims.getExpiration());
+            userInfo.put("iat", claims.getIssuedAt());
+            userInfo.put("username", claims.get("username"));
+            
+            return Result.success(userInfo);
+        } catch (Exception e) {
+            return Result.fail(500,"无效的id_token:" + e.getMessage());
+        }
     }
 } 
